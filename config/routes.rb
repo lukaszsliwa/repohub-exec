@@ -15,4 +15,8 @@ Rails.application.routes.draw do
       resource :link, only: [:create, :destroy], controller: 'groups/users/links'
     end
   end
+
+  resources :users, only: :show do
+    resources :keys, only: :create, controller: 'users/keys'
+  end
 end

@@ -5,6 +5,10 @@ class User < Sudo
     User.new(id: id).raise_an_exception_on_wrong_id!
   end
 
+  def home
+    "/home/#{username}"
+  end
+
   def username
     id
   end
@@ -23,5 +27,16 @@ class User < Sudo
   def as_json(options = {})
     options[:methods] = :username
     super.as_json options
+  end
+
+  def update_keys(array = [])
+    keys = array.map do |attributes|
+      Key.new attributes
+    end
+    File.open("#{home}/.ssh/authorized_keys", "w") do |file|
+      keys.each do |key|
+        file.write "#{key.value}\n\n"
+      end
+    end
   end
 end
