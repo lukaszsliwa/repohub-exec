@@ -17,6 +17,7 @@ class RepositoryUser < Sudo
     else
       `sudo -u #{user.username} /bin/ln -s #{repository.path} /home/#{user.username}/#{handle}.git`
     end
+    UserGroup.create(user: user, group: repository.group)
   end
 
   def delete
@@ -25,5 +26,6 @@ class RepositoryUser < Sudo
     else
       `sudo /bin/rm /home/#{user.username}/#{handle}.git`
     end
+    UserGroup.delete(user: user, group: repository.group)
   end
 end
