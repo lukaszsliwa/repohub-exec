@@ -39,4 +39,8 @@ class User < Sudo
       end
     end
   end
+
+  def self.git
+    User.find 'git'
+  end
 end

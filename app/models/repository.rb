@@ -10,7 +10,7 @@ class Repository < Sudo
   end
 
   def path
-    "/home/git/#{handle}.git"
+    "/home/git/#{id}.git"
   end
 
   def exists?
@@ -18,6 +18,7 @@ class Repository < Sudo
   end
 
   def destroy
+    group.destroy
     `sudo /bin/rm -rf #{path}`
   end
 
@@ -27,6 +28,10 @@ class Repository < Sudo
     else
       raise InvalidParameter.new(self), "Invalid `id' parameters"
     end
+  end
+
+  def group
+    @group ||= Group.find id
   end
 
   def as_json(options)

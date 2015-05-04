@@ -16,6 +16,7 @@ class Group < Sudo
     if valid?
       output = `sudo /usr/sbin/addgroup #{name}`
       if output.lines.last.strip == 'Done.'
+        UserGroup.create(group: self, user: User.git)
         return true
       else
         errors.add :base, output.first.strip
@@ -25,6 +26,7 @@ class Group < Sudo
   end
 
   def destroy
+    UserGroup.delete(group: self, user: User.git)
     `sudo /usr/sbin/delgroup #{name}`.lines.last.strip == 'Done.' if exists?
   end
 
@@ -37,7 +39,7 @@ class Group < Sudo
   end
 
   def raise_an_exception_on_wrong_id!
-    if id =~ /\A[0-9]+\Z/
+    if id.is_a?(Integer) || id.is_a?(String) && id =~ /\A[0-9]+\Z/
       return self
     end
     raise InvalidParameter.new(self), "Invalid `id' parameters"

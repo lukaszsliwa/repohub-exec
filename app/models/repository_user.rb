@@ -1,5 +1,5 @@
 class RepositoryUser < Sudo
-  attr_accessor :user, :repository
+  attr_accessor :user, :repository, :space, :handle
 
   def self.create(params = {})
     RepositoryUser.new(params).save
@@ -10,10 +10,20 @@ class RepositoryUser < Sudo
   end
 
   def save
-    `sudo -u #{user.username} /bin/ln -s #{repository.path} /home/#{user.username}/#{repository.handle}.git`
+    if space.present?
+      user_space_dir = "/home/#{user.username}/#{space}"
+      `sudo -u #{user.username} /bin/mkdir -p #{user_space_dir}`
+      `sudo -u #{user.username} /bin/ln -s #{repository.path} #{user_space_dir}/#{handle}.git`
+    else
+      `sudo -u #{user.username} /bin/ln -s #{repository.path} /home/#{user.username}/#{handle}.git`
+    end
   end
 
   def delete
-    `sudo /bin/rm /home/#{user.username}/#{repository.handle}.git`
+    if space.present?
+      `sudo /bin/rm /home/#{user.username}/#{space}/#{handle}.git`
+    else
+      `sudo /bin/rm /home/#{user.username}/#{handle}.git`
+    end
   end
 end
