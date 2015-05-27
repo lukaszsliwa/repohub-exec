@@ -16,7 +16,9 @@ class Group < Sudo
     if valid?
       output = `sudo /usr/sbin/addgroup #{name}`
       if output.lines.last.strip == 'Done.'
+        repository.bare
         UserGroup.create(group: self, user: User.git)
+        Owner.create(repository: repository, group: repository.group, user: User.git, recursive: true)
         return true
       else
         errors.add :base, output.first.strip
@@ -43,6 +45,10 @@ class Group < Sudo
       return self
     end
     raise InvalidParameter.new(self), "Invalid `id' parameters"
+  end
+
+  def repository
+    @repository ||= Repository.find id
   end
 
   def as_json(options = {})
