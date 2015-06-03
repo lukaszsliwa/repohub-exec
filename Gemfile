@@ -14,3 +14,8 @@ gem 'puma'
 gem 'activemodel'
 
 gem 'settingslogic'
+
+gem 'capistrano', '~> 3.4.0'
+gem 'capistrano-rails'
+gem 'capistrano-rvm'
+gem 'capistrano-bundler'
