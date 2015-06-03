@@ -1,13 +1,16 @@
 class Repository < Sudo
   attr_accessor :id
 
+  validates! :id, format: { with: /\A[a-zA-Z0-9]+\Z/ }, length: { maximum: 9 }
+
   def bare
     sudo "git init --bare #{path}"
     sudo "chmod -R 770 #{path}"
   end
 
   def self.find(id)
-    Repository.new(id: id).raise_an_exception_on_wrong_id!
+    (repository = Repository.new(id: id)).valid?
+    repository
   end
 
   def handle
@@ -25,14 +28,6 @@ class Repository < Sudo
   def destroy
     group.destroy
     `sudo /bin/rm -rf #{path}`
-  end
-
-  def raise_an_exception_on_wrong_id!
-    if id.to_s =~ /\A[a-zA-Z0-9\-\_]+\Z/
-      self
-    else
-      raise InvalidParameter.new(self), "Invalid `id' parameters"
-    end
   end
 
   def group

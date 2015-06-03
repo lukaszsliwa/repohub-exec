@@ -1,15 +1,16 @@
 class Group < Sudo
   attr_accessor :id
 
-  validates_numericality_of :id
+  validates! :id, format: { with: /\A[a-zA-Z0-9]+\Z/ }, length: { maximum: 9 }
   before_validation :validate_existence_of_name
 
   def self.find(id)
-    Group.new(id: id).raise_an_exception_on_wrong_id!
+    (group = Group.new(id: id)).valid?
+    group
   end
 
   def name
-    "repository_#{id}"
+    "repofs_#{id}"
   end
 
   def save
@@ -38,13 +39,6 @@ class Group < Sudo
 
   def validate_existence_of_name
     errors.add :base, "#{name} already exists." if exists?
-  end
-
-  def raise_an_exception_on_wrong_id!
-    if id.is_a?(Integer) || id.is_a?(String) && id =~ /\A[0-9]+\Z/
-      return self
-    end
-    raise InvalidParameter.new(self), "Invalid `id' parameters"
   end
 
   def repository
