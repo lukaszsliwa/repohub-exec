@@ -3,6 +3,7 @@ class Repository < Sudo
 
   def bare
     sudo "git init --bare #{path}"
+    sudo "chmod -R 770 #{path}"
   end
 
   def self.find(id)
