@@ -14,7 +14,7 @@ class Repository < Sudo
   end
 
   def path
-    "/home/git/#{id}.git"
+    "#{Settings.git.home}/#{id}.git"
   end
 
   def exists?

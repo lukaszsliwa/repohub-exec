@@ -12,3 +12,5 @@ gem 'jbuilder'
 gem 'puma'
 
 gem 'activemodel'
+
+gem 'settingslogic'

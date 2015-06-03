@@ -6,7 +6,7 @@ class User < Sudo
   end
 
   def home
-    "/home/#{username}"
+    "#{Settings.user.home}/#{username}"
   end
 
   def username
@@ -56,6 +56,6 @@ class User < Sudo
   end
 
   def self.git
-    User.find 'git'
+    User.find Settings.git.login
   end
 end

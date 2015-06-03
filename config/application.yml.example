@@ -1,0 +1,15 @@
+defaults: &defaults
+    user:
+        home: '/home'
+    git:
+        login: 'git'
+        home: '/home/git'
+
+development:
+    <<: *defaults
+
+test:
+    <<: *defaults
+
+production:
+    <<: *defaults
