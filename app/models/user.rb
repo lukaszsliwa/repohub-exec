@@ -1,8 +1,12 @@
 class User < Sudo
   attr_accessor :id
 
+  validates! :id, format: { with: /\A[a-zA-Z0-9]+\Z/ }, length: { maximum: 16 }
+  before_validation :validate_existence_of_id
+
   def self.find(id)
-    User.new(id: id).raise_an_exception_on_wrong_id!
+    (user = User.new(id: id)).valid?
+    user
   end
 
   def home
@@ -31,11 +35,8 @@ class User < Sudo
     !`/usr/bin/getent passwd #{username}`.empty?
   end
 
-  def raise_an_exception_on_wrong_id!
-    if !root? && exists?
-      return self
-    end
-    raise InvalidParameter.new(self)
+  def validate_existence_of_id
+    errors.add :id, 'is incorrect' if root? || exists?
   end
 
   def as_json(options = {})
